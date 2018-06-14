@@ -1,0 +1,49 @@
+name: sql-engine
+version: '0.1.0.0'
+synopsis: Initial project template from stack
+description: Please see README.md
+category: Language
+author: Your name here
+maintainer: your.address@example.com
+license: BSD3
+github: name/project
+homepage: http://github.com/name/project
+library:
+  source-dirs: src
+  ghc-options: -Wall
+  exposed-modules:
+  - Lib
+  - Algebra
+  - Translation
+  - TranslatorM
+  - Schema
+  - Evaluator
+  dependencies:
+  - base >=4.7 && <5
+  - simple-sql-parser
+  - containers
+  - mtl
+executables:
+  sql-engine-exe:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - base
+    - sql-engine
+tests:
+  sql-engine-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - base
+    - sql-engine
+    - simple-sql-parser
+    - hspec

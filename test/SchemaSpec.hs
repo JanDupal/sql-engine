@@ -42,7 +42,7 @@ spec =
 
     context "in Rename" $ do
       it "looks up aliases" $
-        attributeLookup (Rename [("x", "y")] dual) Nothing "y" `shouldBe` Right "x"
+        attributeLookup (Rename [("x", "y")] dual) Nothing "y" `shouldBe` Right "y"
 
       it "fails on original names" $
         attributeLookup (Rename [("x", "y")] dual) Nothing "x" `shouldBe` Left (UnknownIdentifier Nothing "x")

@@ -55,8 +55,14 @@ spec =
         it "builds renaming" $
           translate "SELECT dummy y FROM dual" `shouldBe` Right (Rename [("dummy", "y")] (Projection ["dummy"] dual))
 
+        it "builds renaming with full qualification" $
+          translate "SELECT dual.dummy y FROM dual" `shouldBe` Right (Rename [("dummy", "y")] (Projection ["dummy"] dual))
+
+        it "builds selection from subselect" $
+          translate "SELECT y FROM (SELECT dual.x y FROM dual)" `shouldBe` Right (Projection ["y"] (Rename [("x", "y")] (Projection ["x"] dual)))
+
         it "builds renaming from subselect" $
-          translate "SELECT d.y z FROM (SELECT dual.x y FROM dual) d" `shouldBe` Right (Rename [("y", "z")] (Alias "d" (Rename [("x", "y")] (Projection ["x"] dual))))
+          translate "SELECT d.y z FROM (SELECT dual.x y FROM dual) d" `shouldBe` Right (Rename [("y", "z")] (Projection ["y"] (Alias "d" (Rename [("x", "y")] (Projection ["x"] dual)))))
 
       context "with error" $ do
         it "fails on unknown column" $
@@ -66,7 +72,7 @@ spec =
           translate "SELECT unknown.dummy FROM dual" `shouldBe` Left (UnknownIdentifier (Just "unknown") "dummy")
 
         it "fails on ambiguous column" $
-          translate "SELECT dummy FROM dual, dual" `shouldBe` Left (AmbigiousIdentifier Nothing "dummy")
+          translate "SELECT dummy FROM dual, dual" `shouldBe` Left (AmbiguousIdentifier Nothing "dummy")
 
     describe "WHERE" $ do
       context "with valid" $ do

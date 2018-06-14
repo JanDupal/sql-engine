@@ -38,7 +38,7 @@ attributeLookup_ (Product left right) source identifier = do
   case (leftMaybeAttr, rightMaybeAttr) of
     (Just attr, Nothing) -> return $ Just attr
     (Nothing, Just attr) -> return $ Just attr
-    (Just _, Just _)     -> throwError $ AmbigiousIdentifier source identifier
+    (Just _, Just _)     -> throwError $ AmbiguousIdentifier source identifier
     (Nothing, Nothing)   -> return Nothing
 
 attributeLookup_ (Projection attrs relation) Nothing identifier =
@@ -48,6 +48,11 @@ attributeLookup_ (Projection attrs relation) Nothing identifier =
     return Nothing
 
 attributeLookup_ (Rename mapping relation) Nothing identifier =
-  case find (\(_, v) -> v == identifier) mapping of
-    Just (k, _) -> attributeLookup_ relation Nothing k
-    Nothing     -> attributeLookup_ relation Nothing identifier
+  case findByNewAlias of
+    Just (_, v) -> return $ Just v
+    Nothing     -> case findByOriginalName of
+      Just _ -> return Nothing
+      Nothing -> attributeLookup_ relation Nothing identifier
+  where
+    findByNewAlias = find (\(_, v) -> v == identifier) mapping
+    findByOriginalName = find (\(k, _) -> k == identifier) mapping
